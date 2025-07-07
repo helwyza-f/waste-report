@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 
 import { convertToBase64, getCurrentLocation } from "@/lib/utils/form";
 import { buildPrompt } from "@/lib/utils/prompt";
+import { sendNotification } from "@/lib/utils/send-notification";
 
 // Leaflet map import
 const DynamicMap = dynamic(() => import("@/components/DynamicMap"), {
@@ -155,6 +156,11 @@ export default function ReportClient({ user }: Props) {
       }
 
       toast.success("🎉 Laporan berhasil dikirim!");
+      await sendNotification({
+        title: "Laporan Sampah Baru",
+        body: `Laporan baru dari ${user.email || user.id}`,
+        url: "/report",
+      });
       router.push("/report/success");
     } catch (err: any) {
       toast.error(err.message || "Gagal mengirim laporan");

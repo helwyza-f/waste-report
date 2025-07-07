@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import ReportsClient from "./reportsclient";
+import { redirect } from "next/navigation";
 
 export default async function AdminReportsPage() {
   const supabase = await createClient();
@@ -17,11 +18,7 @@ export default async function AdminReportsPage() {
     .single();
   //   console.log("Profile:", profile);
   if (profile?.role !== "admin") {
-    return (
-      <div className="text-red-500 text-center py-10">
-        Akses ditolak: Hanya admin.
-      </div>
-    );
+    return redirect("/");
   }
 
   const { data: reports } = await supabase

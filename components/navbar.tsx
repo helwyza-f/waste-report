@@ -77,6 +77,7 @@ export default function Navbar() {
           { label: "Dashboard", href: "/admin/reports" },
           { label: "Peta Admin", href: "/admin/map" },
           { label: "Kelola Pengguna", href: "/admin/users" },
+          { label: "Notifikasi", href: "/admin/notifications" },
           { label: "Profil", href: "/profile" },
         ]
       : [

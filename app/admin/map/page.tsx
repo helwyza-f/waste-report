@@ -1,6 +1,7 @@
 // app/admin/map/page.tsx
 import { createClient } from "@/lib/supabase/server";
 import Wrapper from "./wrapper";
+import { redirect } from "next/navigation";
 
 export default async function AdminMapPage() {
   const supabase = await createClient();
@@ -18,11 +19,7 @@ export default async function AdminMapPage() {
     .single();
 
   if (profile?.role !== "admin") {
-    return (
-      <div className="text-red-500 text-center py-10">
-        Akses ditolak: hanya admin.
-      </div>
-    );
+    return redirect("/");
   }
 
   const { data: reports } = await supabase
