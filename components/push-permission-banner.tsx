@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
+
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
 
 export default function PushPermissionBanner() {
   const [showBanner, setShowBanner] = useState(false);
@@ -17,11 +20,38 @@ export default function PushPermissionBanner() {
 
   const handleAllowNotification = async () => {
     const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      console.log("Notifikasi diizinkan");
-    } else {
+    if (permission !== "granted") {
       console.log("Notifikasi ditolak");
+      setShowBanner(false);
+      return;
     }
+
+    console.log("🔔 Notifikasi diizinkan");
+
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      console.warn("Push tidak didukung di browser ini");
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+    });
+
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase.from("subscriptions").upsert({
+      user_id: user.id,
+      endpoint: subscription.endpoint,
+      keys: subscription.toJSON().keys,
+    });
+
+    console.log("✅ Subscription berhasil disimpan ke Supabase");
     setShowBanner(false);
   };
 
@@ -37,4 +67,14 @@ export default function PushPermissionBanner() {
       </Button>
     </div>
   );
+}
+
+// helper untuk VAPID key
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
+  const rawData = atob(base64);
+  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }

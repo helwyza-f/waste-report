@@ -5,7 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import PWAInstallPrompt from "@/components/pwainstallprompt";
-import PushSubscription from "@/components/push-subscription";
+
 import PushPermissionBanner from "@/components/push-permission-banner";
 
 const geistSans = Geist({
@@ -72,7 +72,7 @@ export default function RootLayout({
           <main className="pt-5 px-4 max-w-6xl mx-auto">{children}</main>
           <Toaster />
           <PWAInstallPrompt />
-          <PushSubscription />
+
           <PushPermissionBanner />
         </ThemeProvider>
       </body>
