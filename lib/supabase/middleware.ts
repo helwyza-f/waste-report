@@ -56,6 +56,11 @@ export async function updateSession(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/reports";
       return NextResponse.redirect(url);
+    } else {
+      // 🧱 Jika user biasa, redirect ke /report
+      const url = request.nextUrl.clone();
+      url.pathname = "/beranda";
+      return NextResponse.redirect(url);
     }
   }
 
