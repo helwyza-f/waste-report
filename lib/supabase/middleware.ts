@@ -52,16 +52,26 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    if (profile?.role === "admin") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin/reports";
-      return NextResponse.redirect(url);
-    } else {
-      // 🧱 Jika user biasa, redirect ke /report
-      const url = request.nextUrl.clone();
-      url.pathname = "/beranda";
-      return NextResponse.redirect(url);
-    }
+    const url = request.nextUrl.clone();
+    url.pathname = profile?.role === "admin" ? "/admin/reports" : "/beranda";
+    return NextResponse.redirect(url);
+  }
+
+  // ✅ Jika user sudah login dan mengakses halaman auth, redirect sesuai role
+  if (
+    user &&
+    (request.nextUrl.pathname === "/auth/login" ||
+      request.nextUrl.pathname === "/auth/sign-up")
+  ) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    const url = request.nextUrl.clone();
+    url.pathname = profile?.role === "admin" ? "/admin/reports" : "/beranda";
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;
