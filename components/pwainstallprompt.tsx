@@ -61,7 +61,7 @@ export default function PWAInstallPrompt() {
     <>
       {/* ✅ Untuk Chrome dan lainnya */}
       {isInstallable && (
-        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border rounded-md px-4 py-3 shadow z-[10000] w-[90%] max-w-sm">
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border rounded-md px-4 py-3 shadow z-[10000] w-[90%] max-w-xs">
           {/* <p className="text-sm mb-2">Install aplikasi WasteReport?</p> */}
           <div className="flex justify-center">
             <Button onClick={handleInstall}>📲 Install</Button>

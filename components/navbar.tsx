@@ -68,6 +68,8 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/auth/login");
+    router.refresh();
+    setIsLoggedIn(false);
   };
 
   // ✅ Link dinamis berdasarkan role

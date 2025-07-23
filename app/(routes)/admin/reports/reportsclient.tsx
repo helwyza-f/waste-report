@@ -1,6 +1,6 @@
 "use client";
 
-import { Report } from "@/app/map/types";
+import { Report } from "@/app/(routes)/map/types";
 import Image from "next/image";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";

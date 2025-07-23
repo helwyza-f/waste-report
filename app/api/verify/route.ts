@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     // Inisialisasi Gemini
     const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API!);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // Kirim prompt + gambar ke Gemini
     const result = await model.generateContent([

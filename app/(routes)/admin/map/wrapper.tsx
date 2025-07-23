@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Report } from "@/app/map/types";
+import { Report } from "@/app/(routes)/map/types";
 
 // Import AdminMapClient tanpa SSR
 const AdminMapClient = dynamic(() => import("./adminmapclient"), {

@@ -33,13 +33,34 @@ export function LoginForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/admin/reports");
+      const { data: signInData, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+      if (signInError) throw signInError;
+
+      const user = signInData.user;
+
+      // Fetch profile data to get the role
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError || !profile) {
+        throw new Error("Failed to retrieve user role.");
+      }
+
+      // Redirect based on role
+      if (profile.role === "admin") {
+        router.push("/admin/reports");
+      } else {
+        router.push("/beranda");
+      }
+      router.refresh();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

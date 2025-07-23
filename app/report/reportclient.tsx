@@ -93,17 +93,21 @@ export default function ReportClient({ user }: Props) {
     }
   };
 
+  /**
+   * Verifikasi gambar menggunakan AI.
+   * Jika berhasil, maka akan di set ke state `verified`.
+   * Jika gagal, maka akan muncul error message.
+   * @param data Data yang diisi oleh pengguna.
+   */
   const onVerify = async (data: FormData) => {
     if (!location) {
       toast.error("Lokasi belum tersedia.");
       return;
     }
-
     setLoadingVerify(true);
     try {
       const base64 = await convertToBase64(data.image);
       const prompt = buildPrompt(data.description, location);
-
       const res = await fetch("/api/verify", {
         method: "POST",
         body: JSON.stringify({
@@ -112,10 +116,8 @@ export default function ReportClient({ user }: Props) {
           prompt,
         }),
       });
-
       const result = await res.json();
       if (!res.ok) throw new Error(result.error);
-
       setVerified(result);
       toast.success("✅ Gambar berhasil diverifikasi");
     } catch (err: any) {
