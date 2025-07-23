@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
 
@@ -21,19 +22,22 @@ export default function PushPermissionBanner() {
 
   const handleAllowNotification = async () => {
     setIsLoading(true);
+    const loadingToast = toast.loading("Memproses permintaan...");
 
     try {
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
-        console.log("Notifikasi ditolak");
+        toast.dismiss(loadingToast);
+        toast.error("Notifikasi ditolak");
         setShowBanner(false);
+        setIsLoading(false);
         return;
       }
 
-      console.log("🔔 Notifikasi diizinkan");
-
       if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-        console.warn("Push tidak didukung di browser ini");
+        toast.dismiss(loadingToast);
+        toast.error("Push tidak didukung di browser ini");
+        setIsLoading(false);
         return;
       }
 
@@ -47,7 +51,12 @@ export default function PushPermissionBanner() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        toast.dismiss(loadingToast);
+        toast.error("User tidak ditemukan");
+        setIsLoading(false);
+        return;
+      }
 
       await supabase.from("subscriptions").upsert({
         user_id: user.id,
@@ -55,10 +64,13 @@ export default function PushPermissionBanner() {
         keys: subscription.toJSON().keys,
       });
 
-      console.log("✅ Subscription berhasil disimpan ke Supabase");
+      toast.dismiss(loadingToast);
+      toast.success("Notifikasi diaktifkan ✅");
       setShowBanner(false);
-    } catch (err) {
-      console.error("❌ Gagal meminta notifikasi:", err);
+    } catch (error) {
+      console.error("Gagal mengaktifkan notifikasi:", error);
+      toast.dismiss(loadingToast);
+      toast.error("Terjadi kesalahan. Coba lagi.");
     } finally {
       setIsLoading(false);
     }
@@ -78,10 +90,11 @@ export default function PushPermissionBanner() {
   );
 }
 
-// helper untuk VAPID key
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
   const rawData = atob(base64);
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
