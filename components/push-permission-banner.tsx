@@ -42,6 +42,19 @@ export default function PushPermissionBanner() {
       }
 
       const registration = await navigator.serviceWorker.ready;
+
+      // ✅ CEK jika sudah terdaftar sebelumnya
+      const existingSubscription =
+        await registration.pushManager.getSubscription();
+      if (existingSubscription) {
+        toast.dismiss(loadingToast);
+        toast.success("Notifikasi sudah diaktifkan");
+        setShowBanner(false);
+        setIsLoading(false);
+        return;
+      }
+
+      // 🆕 Jika belum ada, buat subscription baru
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
@@ -75,6 +88,8 @@ export default function PushPermissionBanner() {
       setIsLoading(false);
     }
   };
+
+  if (typeof window === "undefined") return null;
 
   if (!showBanner) return null;
 
