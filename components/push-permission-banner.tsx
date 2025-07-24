@@ -12,13 +12,29 @@ export default function PushPermissionBanner() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      const permission = Notification.permission;
-      if (permission === "default") {
-        setShowBanner(true);
+    const checkUserAndPermission = async () => {
+      if (
+        typeof window !== "undefined" &&
+        "Notification" in window &&
+        "serviceWorker" in navigator
+      ) {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        const permission = Notification.permission;
+
+        if (user && permission === "default") {
+          setShowBanner(true);
+        }
       }
-    }
+    };
+
+    checkUserAndPermission();
   }, []);
+  // Fungsi untuk mengizinkan notifikasi
+  // Ini akan meminta izin kepada pengguna untuk mengaktifkan notifikasi
 
   const handleAllowNotification = async () => {
     setIsLoading(true);
