@@ -105,7 +105,7 @@ export default function PushPermissionBanner() {
     }
   };
 
-  if (typeof window === "undefined") return null;
+  
 
   if (!showBanner) return null;
 
