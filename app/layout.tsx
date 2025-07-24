@@ -71,8 +71,7 @@ export default function RootLayout({
           <Navbar />
           <main className="pt-5 px-4 max-w-6xl mx-auto">{children}</main>
           <Toaster />
-          
-          
+          <PWAInstallPrompt />
         </ThemeProvider>
       </body>
     </html>
