@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { createClient } from "@/lib/supabase/client";
+import { BellIconButton } from "./BellIconButton";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -113,6 +114,7 @@ export default function Navbar() {
               {item.label}
             </Link>
           ))}
+          {isLoggedIn && <BellIconButton />} {/* ✅ Tambah di sini */}
           <ThemeSwitcher />
           {isLoggedIn ? (
             <Button size="sm" onClick={handleLogout}>
@@ -162,6 +164,12 @@ export default function Navbar() {
                   <span className="text-sm text-muted-foreground">Tema</span>
                   <ThemeSwitcher />
                 </div>
+
+                {isLoggedIn && (
+                  <div className="mt-4">
+                    <BellIconButton />
+                  </div>
+                )}
 
                 {isLoggedIn ? (
                   <Button size="sm" onClick={handleLogout}>
