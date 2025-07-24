@@ -72,6 +72,7 @@ export default function RootLayout({
           <main className="pt-5 px-4 max-w-6xl mx-auto">{children}</main>
           <Toaster />
           <PWAInstallPrompt />
+          <PushPermissionBanner />
         </ThemeProvider>
       </body>
     </html>

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Report } from "@/app/(routes)/map/types";
+import { Report } from "@/app/map/types";
 import {
   DropdownMenu,
   DropdownMenuContent,
