@@ -14,8 +14,9 @@ export const config = {
      * - favicon.ico
      * - image assets (svg, png, jpg, etc.)
      * - sw.js (service worker)
+     * - workbox-*.js (service worker dependencies)
      * - manifest.json (web manifest)
      */
-    "/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|workbox-[a-zA-Z0-9]+\\.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
