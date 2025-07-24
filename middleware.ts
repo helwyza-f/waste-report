@@ -12,11 +12,12 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization)
      * - favicon.ico
-     * - image assets (svg, png, jpg, etc.)
      * - sw.js (service worker)
-     * - workbox-*.js (service worker dependencies)
      * - manifest.json (web manifest)
+     * - workbox-*.js & worker-*.js (generated PWA files)
+     * - static image extensions
      */
-    "/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|workbox-[a-zA-Z0-9]+\\.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|workbox-[a-zA-Z0-9]+\\.js|worker-[a-zA-Z0-9]+\\.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
+
