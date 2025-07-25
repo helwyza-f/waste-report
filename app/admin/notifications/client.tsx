@@ -50,7 +50,7 @@ export default function NotificationPage() {
         value={url}
         onChange={(e) => setUrl(e.target.value)}
       />
-      <Button onClick={handleSend} disabled={isSending}>🚀 Kirim</Button>
+      <Button onClick={handleSend} disabled={isSending}>{isSending ? "Mengirim..." : "Kirim" }</Button>
     </div>
   );
 }
