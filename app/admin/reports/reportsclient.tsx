@@ -34,6 +34,8 @@ export default function ReportsClient({ reports }: { reports: Report[] }) {
   const [urgencyFilter, setUrgencyFilter] = useState("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     const { error } = await supabase
@@ -107,37 +109,57 @@ export default function ReportsClient({ reports }: { reports: Report[] }) {
     return csvContent;
   }
 
-  const handleExportCSV = () => {
-    const csv = convertToCSV(filteredData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
+  const handleExportCSV = async () => {
+    setIsExportingCSV(true);
+    try {
+      const csv = convertToCSV(filteredData);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "laporan-sampah.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "laporan-sampah.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("CSV berhasil diunduh!");
+    } catch (err) {
+      toast.error("Gagal ekspor CSV.");
+    } finally {
+      setIsExportingCSV(false);
+    }
   };
 
-  const handleExportExcel = () => {
-    const exportData = filteredData.map((r) => ({
-      ID: r.id,
-      Deskripsi: r.description || "",
-      Lokasi: r.location || "",
-      Urgensi: r.urgency || "",
-      Status: r.status || "",
-      "Waktu Lapor": r.created_at
-        ? format(new Date(r.created_at), "dd MMM yyyy, HH:mm")
-        : "",
-    }));
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan");
+  const handleExportExcel = async () => {
+    setIsExportingExcel(true);
+    try {
+      const exportData = filteredData.map((r) => ({
+        ID: r.id,
+        Deskripsi: r.description || "",
+        Lokasi: r.location || "",
+        Urgensi: r.urgency || "",
+        Status: r.status || "",
+        "Waktu Lapor": r.created_at
+          ? format(new Date(r.created_at), "dd MMM yyyy, HH:mm")
+          : "",
+      }));
 
-    XLSX.writeFile(workbook, "laporan.xlsx");
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan");
+
+      XLSX.writeFile(workbook, "laporan.xlsx");
+
+      toast.success("Excel berhasil diunduh!");
+    } catch (err) {
+      toast.error("Gagal ekspor Excel.");
+    } finally {
+      setIsExportingExcel(false);
+    }
   };
+
 
   return (
     <div className="max-w-6xl mx-auto py-6 px-3 space-y-6 min-h-screen mb-80">
@@ -236,15 +258,18 @@ export default function ReportsClient({ reports }: { reports: Report[] }) {
                 variant="secondary"
                 className="text-sm"
                 onClick={handleExportCSV}
+                disabled={isExportingCSV}
               >
-                📥 Export CSV
+                {isExportingCSV ? "⏳ Ekspor..." : "📥 Export CSV"}
               </Button>
+
               <Button
                 variant="secondary"
                 className="text-sm"
                 onClick={handleExportExcel}
+                disabled={isExportingExcel}
               >
-                📊 Export Excel
+                {isExportingExcel ? "⏳ Ekspor..." : "📊 Export Excel"}
               </Button>
             </div>
           </CollapsibleContent>
@@ -326,15 +351,18 @@ export default function ReportsClient({ reports }: { reports: Report[] }) {
             variant="secondary"
             className="text-sm"
             onClick={handleExportCSV}
+            disabled={isExportingCSV}
           >
-            📥 Export CSV
+            {isExportingCSV ? "⏳ Ekspor..." : "📥 Export CSV"}
           </Button>
+
           <Button
             variant="secondary"
             className="text-sm"
             onClick={handleExportExcel}
+            disabled={isExportingExcel}
           >
-            📊 Export Excel
+            {isExportingExcel ? "⏳ Ekspor..." : "📊 Export Excel"}
           </Button>
         </div>
       </div>
