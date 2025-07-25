@@ -10,8 +10,14 @@ export default function NotificationPage() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [url, setUrl] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
   const handleSend = async () => {
+    if (!title || !body) {
+      toast.error("Judul dan isi pesan tidak boleh kosong");
+      return;
+    }
+    setIsSending(true);
     const res = await fetch("/api/notifications/push", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -20,6 +26,7 @@ export default function NotificationPage() {
 
     const result = await res.json();
     toast.success(`Notifikasi dikirim ke ${result.sent} pengguna`);
+    setIsSending(false);
     setTitle("");
     setBody("");
     setUrl("");
@@ -43,7 +50,7 @@ export default function NotificationPage() {
         value={url}
         onChange={(e) => setUrl(e.target.value)}
       />
-      <Button onClick={handleSend}>🚀 Kirim</Button>
+      <Button onClick={handleSend} disabled={isSending}>🚀 Kirim</Button>
     </div>
   );
 }
