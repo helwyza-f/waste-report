@@ -61,7 +61,7 @@ export function SignUpForm({
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
+          <CardDescription>Buat akun baru</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp}>
@@ -107,7 +107,7 @@ export function SignUpForm({
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
+              Sudah punya akun?{" "}
               <Link href="/auth/login" className="underline underline-offset-4">
                 Login
               </Link>
