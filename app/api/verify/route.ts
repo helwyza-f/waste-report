@@ -73,13 +73,17 @@ KONTEKS PENGGUNA:
 - Lokasi: Latitude ${location.lat}, Longitude ${location.lng}
 
 TUGAS:
-1) Estimasikan quantity sampah dari konteks & gambar.
-2) Gunakan satuan kilogram (kg).
-3) Kembalikan HANYA JSON dengan struktur:
+1) Jika "Waste type" BUKAN sampah (misal: manusia, hewan, kendaraan, tanaman, atau objek lain yang tidak dianggap sampah), maka kembalikan JSON dengan format:
+{ "error": "Bukan sampah" }
+
+2) Jika terdeteksi sampah, estimasikan quantity sampah dari konteks & gambar.
+3) Gunakan satuan kilogram (kg).
+4) Kembalikan HANYA JSON dengan struktur:
 { "quantity": 3.5 }
 
 Catatan:
 - quantity harus berupa number (bukan string, tanpa satuan).
+- Jangan kembalikan teks lain selain JSON.
 `.trim();
 
     // Sertakan gambar ke Gemini
@@ -104,6 +108,10 @@ Catatan:
         { error: "Respon Gemini tidak valid JSON." },
         { status: 400 }
       );
+    }
+
+    if (parsed?.error) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
     const quantity: number | undefined = parsed?.quantity;
