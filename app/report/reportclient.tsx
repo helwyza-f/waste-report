@@ -64,6 +64,7 @@ export default function ReportClient({ user }: Props) {
     quantity: string;
     confidence: number;
     urgency: string;
+    yoloPublicUrl?: string;
   } | null>(null);
 
   const [loadingVerify, setLoadingVerify] = useState(false);
@@ -107,19 +108,24 @@ export default function ReportClient({ user }: Props) {
     setLoadingVerify(true);
     try {
       const base64 = await convertToBase64(data.image);
-      const prompt = buildPrompt(data.description, location);
+
       const res = await fetch("/api/verify", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           image: base64,
           mime: data.image.type,
-          prompt,
+          description: data.description,
+          location, // { lat, lng }
         }),
       });
+
       const result = await res.json();
       if (!res.ok) throw new Error(result.error);
+
+      // result: { wasteType, quantity, urgency, confidence, yoloLabel?, yoloPublicUrl? }
       setVerified(result);
-      toast.success("✅ Gambar berhasil diverifikasi");
+      toast.success("Gambar berhasil diverifikasi");
     } catch (err: any) {
       toast.error(err.message || "Verifikasi gagal");
       setVerified(null);
@@ -261,13 +267,14 @@ export default function ReportClient({ user }: Props) {
       </Button>
 
       {/* Hasil Verifikasi */}
+      {/* Hasil Verifikasi */}
       {verified && (
-        <div className="bg-muted rounded-md p-4 text-sm">
+        <div className="bg-muted rounded-md p-4 text-sm space-y-2">
           <p>
             <strong>Jenis Sampah:</strong> {verified.wasteType}
           </p>
           <p>
-            <strong>Jumlah Estimasi:</strong> {verified.quantity}
+            <strong>Jumlah Estimasi:</strong> {verified.quantity} Kg
           </p>
           <p>
             <strong>Confidence:</strong>{" "}
@@ -276,6 +283,19 @@ export default function ReportClient({ user }: Props) {
           <p>
             <strong>Tingkat Urgensi:</strong> {verified.urgency}
           </p>
+
+          {verified.yoloPublicUrl && (
+            <div className="pt-2">
+              <a
+                href={verified.yoloPublicUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline"
+              >
+                Lihat Hasil Deteksi YOLO
+              </a>
+            </div>
+          )}
         </div>
       )}
 

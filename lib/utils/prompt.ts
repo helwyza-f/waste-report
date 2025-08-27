@@ -16,7 +16,7 @@ export const buildPrompt = (
    {
      "isWaste": true,
      "wasteType": "plastik / organik / logam / ...",
-     "quantity": "3kg / 5L / ...",
+     "quantity": "3 kg / 0.2 kg",
      "confidence": 0.85,
      "urgency": "tinggi / sedang / rendah"
    }
