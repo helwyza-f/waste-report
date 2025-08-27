@@ -131,7 +131,7 @@ Catatan:
     });
   } catch (err: any) {
     return NextResponse.json(
-      { error: err?.message || "Terjadi kesalahan di server verify." },
+      { error_route: err?.message || "Terjadi kesalahan di server verify." },
       { status: 500 }
     );
   }
